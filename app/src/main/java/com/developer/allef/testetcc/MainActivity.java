@@ -17,6 +17,10 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+/**
+ * @author Allef
+ * 
+ */
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap map;
     private LatLng mOrigen;
@@ -87,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // stylo do mapa
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         // animação da camera com latitude e proximidade da camera que vai de 2 a 21
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(mOrigen,18.0f));
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(mOrigen,17.0f));
         // adicionando marcador no Maps
         map.addMarker(new MarkerOptions()
         .position(mOrigen)

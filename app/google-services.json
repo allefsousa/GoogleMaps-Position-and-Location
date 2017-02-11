@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "527937615669",
+    "firebase_url": "https://testetccmaps.firebaseio.com",
+    "project_id": "testetccmaps",
+    "storage_bucket": "testetccmaps.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527937615669:android:5325ef98e88e5460",
+        "android_client_info": {
+          "package_name": "com.developer.allef.testetcc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "527937615669-3q8tbaajq9c24toak88uea2365kkhla3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.developer.allef.testetcc",
+            "certificate_hash": "69A0AFCEAA55EBAFFAFDDCB69521FA8DB902DB15"
+          }
+        },
+        {
+          "client_id": "527937615669-2qhqsu5d2vvcg8sjhauln1fvte6hvlph.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALxXmBCqV9Kij8Ci_LHw9D6pqkYOUyV0I"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "527937615669-2qhqsu5d2vvcg8sjhauln1fvte6hvlph.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

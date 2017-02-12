@@ -5,6 +5,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,10 +21,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * @author Allef
- * 
+ *
  */
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap map;
+    private Button button;
+
     private LatLng mOrigen;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

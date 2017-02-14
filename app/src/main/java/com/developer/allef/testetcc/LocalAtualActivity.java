@@ -16,12 +16,14 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResolvingResultCallbacks;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.ResultCallbacks;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
@@ -33,6 +35,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -84,6 +87,15 @@ public class LocalAtualActivity extends AppCompatActivity implements GoogleApiCl
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_ERROR_PLAY_SERVICES && resultCode == RESULT_OK) {
             mgoogleApiClient.connect();
+        }else if(requestCode == Request_chekcar_gps){
+            if(resultCode == RESULT_OK){
+                mtentativas = 0;
+                mhandler.removeCallbacksAndMessages(null);
+                obterUltimaLocalizacao();
+            }else{
+                Toast.makeText(this,R.string.erro_gps,Toast.LENGTH_LONG).show();
+                finish();
+            }
         }
 
 
@@ -94,6 +106,7 @@ public class LocalAtualActivity extends AppCompatActivity implements GoogleApiCl
         if (mgoogleApiClient != null && mgoogleApiClient.isConnected()) {
             mgoogleApiClient.disconnect();
         }
+        mhandler.removeCallbacksAndMessages(null);
 
         super.onStop();
     }
@@ -133,8 +146,17 @@ public class LocalAtualActivity extends AppCompatActivity implements GoogleApiCl
         }
         Location location = LocationServices.FusedLocationApi.getLastLocation(mgoogleApiClient);
         if(location != null){
+            mtentativas = 0;
             mOrigen = new LatLng(location.getLatitude(),location.getLongitude());
             atualizarMapa();
+        }else if(mtentativas < 10){
+            mtentativas++;
+            mhandler.postDelayed( new Runnable() {
+                @Override
+                public void run() {
+                    obterUltimaLocalizacao();
+                }
+            },2000);
         }
 
     }
@@ -190,6 +212,7 @@ public class LocalAtualActivity extends AppCompatActivity implements GoogleApiCl
 
         // inicializando o mapa para modificações
         mgoogleMap = googleMap;
+        mgoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mgoogleMap.getUiSettings().setMapToolbarEnabled(true);
 
     }
@@ -204,9 +227,10 @@ public class LocalAtualActivity extends AppCompatActivity implements GoogleApiCl
 
         PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mgoogleApiClient,locationSettingsRequest.build());
 
-        result.setResultCallback(new ResultCallbacks<LocationSettingsResult>() {
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+
             @Override
-            public void onSuccess(@NonNull LocationSettingsResult locationSettingsResult) {
+            public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
                 final Status status = locationSettingsResult.getStatus();
                 switch(status.getStatusCode()){
                     case LocationSettingsStatusCodes.SUCCESS:
@@ -216,6 +240,7 @@ public class LocalAtualActivity extends AppCompatActivity implements GoogleApiCl
                         if(mdeveexibirdialog){
                             try{
                                 status.startResolutionForResult(LocalAtualActivity.this,Request_chekcar_gps);
+                                mdeveexibirdialog = false;
                             }catch(IntentSender .SendIntentException e){
                                 e.printStackTrace();
 
@@ -229,10 +254,6 @@ public class LocalAtualActivity extends AppCompatActivity implements GoogleApiCl
                 }
             }
 
-            @Override
-            public void onFailure(@NonNull Status status) {
-
-            }
 
         });
     }

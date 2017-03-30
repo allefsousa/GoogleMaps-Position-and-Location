@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Handler;
 import android.os.PersistableBundle;
@@ -11,20 +12,18 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.developer.allef.testetcc.model.rua;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResolvingResultCallbacks;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.ResultCallbacks;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -35,11 +34,18 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import static android.app.Activity.RESULT_OK;
+import java.util.ArrayList;
 
 public class LocalAtualActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback {
     //region variaveis
@@ -52,12 +58,63 @@ public class LocalAtualActivity extends AppCompatActivity implements GoogleApiCl
     private boolean mdeveexibirdialog;
     private int mtentativas;
     private LatLng mOrigen;
+    private  LatLng OriginBD;
+    private DatabaseReference db;
+    private rua latlng;
+    ArrayList<rua> lo = new ArrayList<>();
+    Double latitude ;
+    Double longitude;
+    private rua lovaga;
     //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_local_atual);
+        db = FirebaseDatabase.getInstance().getReference().child("endereco");
+        lovaga = new rua();
+
+
+        db.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                for (DataSnapshot dado : dataSnapshot.getChildren()){
+                    latlng = dado.getValue(rua.class);
+                    Toast.makeText(LocalAtualActivity.this,"mensagem"+latlng.getLatitude(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(LocalAtualActivity.this,"mensagem"+latlng.getLongitude(),Toast.LENGTH_LONG).show();
+                    lo.add(latlng);
+                    if(dataSnapshot != null){
+                        for (int i = 0 ; i < lo.size(); i ++){
+                            latitude = lo.get(i).getLatitude();
+                            longitude = lo.get(i).getLongitude();
+                            Log.w("CARAIO", "Failed to read value."+ latitude + longitude );
+                            Toast.makeText(LocalAtualActivity.this,"mensagem"+latitude,Toast.LENGTH_LONG).show();
+                            Toast.makeText(LocalAtualActivity.this,"mensagem"+longitude,Toast.LENGTH_LONG).show();
+                            OriginBD = new LatLng(latitude,longitude);
+                        }
+                    }
+
+                }
+                //String longi = dataSnapshot.getValue(String.class).toString();
+                Log.d(" teste","LATITUDE" +OriginBD);
+                Log.d("Teste2","LATITUDE" +lo.toString());
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("tag", "Failed to read value.", databaseError.toException());
+            }
+
+        });
+
+
+
+
+//        OriginBD = new LatLng(-23.561706,-46.655981);
+
+
         mhandler = new Handler();
         mdeveexibirdialog = savedInstanceState == null;
         SupportMapFragment fragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map1);
@@ -70,7 +127,7 @@ public class LocalAtualActivity extends AppCompatActivity implements GoogleApiCl
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API).build();
 
-       // verificarStatusGPS();
+        verificarStatusGPS();
 
 
     }
@@ -97,6 +154,16 @@ public class LocalAtualActivity extends AppCompatActivity implements GoogleApiCl
                 finish();
             }
         }
+
+
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        super.startActivityForResult(intent, requestCode);
+        lo = (ArrayList<rua>) intent.getSerializableExtra("local");
+        Log.d("ALLEFSOUSA","Location :" + lo.get(0).getLatitude()+" "+ lo.get(0).getLongitude());
+
 
 
     }
@@ -136,7 +203,7 @@ public class LocalAtualActivity extends AppCompatActivity implements GoogleApiCl
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         obterUltimaLocalizacao();
-        verificarStatusGPS();
+       verificarStatusGPS();
     }
 
     private void obterUltimaLocalizacao() {
@@ -162,12 +229,61 @@ public class LocalAtualActivity extends AppCompatActivity implements GoogleApiCl
     }
 
     private void atualizarMapa() {
+
+
         mgoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mOrigen,17.0f));
+        mgoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         mgoogleMap.clear();
 
         mgoogleMap.addMarker(new MarkerOptions()
             .position(mOrigen)
             .title("Local Atual"));
+        Log.d("mOrigem","mOrigem" +mOrigen);
+
+        mgoogleMap.addMarker(new MarkerOptions()
+                .position(OriginBD)
+                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.preferencial))
+                .title("Vaga Prioritaria"));
+
+
+    }
+    private LatLng tarzerdados(){
+        db.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot dado : dataSnapshot.getChildren()){
+                    latlng = dado.getValue(rua.class);
+                    lo.add(latlng);
+                    OriginBD = new LatLng(latlng.getLatitude(),latlng.getLongitude());
+                }
+                //String longi = dataSnapshot.getValue(String.class).toString();
+                Log.d("ALLEF","LATITUDE" +OriginBD);
+                Log.d("ALLEF","LATITUDE" +lo.toString());
+
+
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("tag", "Failed to read value.", databaseError.toException());
+
+            }
+        });
+        return OriginBD;
+
+    }
+    private void adicionarPoly(GoogleMap map,LatLng latLng, LatLng latLng2){
+
+        // desenhar a linha entre os dois Pontos
+        PolylineOptions line = new PolylineOptions();
+        line.add(new LatLng(latLng.latitude,latLng.longitude));
+        line.add(new LatLng(latLng2.latitude,latLng2.longitude));
+        line.color(Color.RED);
+        Polyline polyline = mgoogleMap.addPolyline(line);
+        polyline.setGeodesic(true);
 
     }
 
@@ -234,7 +350,7 @@ public class LocalAtualActivity extends AppCompatActivity implements GoogleApiCl
                 final Status status = locationSettingsResult.getStatus();
                 switch(status.getStatusCode()){
                     case LocationSettingsStatusCodes.SUCCESS:
-                        obterUltimaLocalizacao();
+                      //  obterUltimaLocalizacao();
                     break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         if(mdeveexibirdialog){

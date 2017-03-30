@@ -19,7 +19,7 @@
           "client_type": 1,
           "android_info": {
             "package_name": "com.developer.allef.testetcc",
-            "certificate_hash": "69A0AFCEAA55EBAFFAFDDCB69521FA8DB902DB15"
+            "certificate_hash": "69a0afceaa55ebaffafddcb69521fa8db902db15"
           }
         },
         {
@@ -44,6 +44,68 @@
               "client_type": 3
             }
           ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527937615669:android:e43397a39465bf55",
+        "android_client_info": {
+          "package_name": "com.developer.allef.mapsfire"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "527937615669-2qhqsu5d2vvcg8sjhauln1fvte6hvlph.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALxXmBCqV9Kij8Ci_LHw9D6pqkYOUyV0I"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527937615669:android:8f5d3f21133fd159",
+        "android_client_info": {
+          "package_name": "com.developer.allef.tcc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "527937615669-2qhqsu5d2vvcg8sjhauln1fvte6hvlph.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALxXmBCqV9Kij8Ci_LHw9D6pqkYOUyV0I"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2

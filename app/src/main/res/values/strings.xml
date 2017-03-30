@@ -2,4 +2,6 @@
     <string name="app_name">TesteTcc</string>
     <string name="API_KEY">AIzaSyCxAVIoot17d956k8pCylSHzzp4Zdbgrgk</string>
     <string name="erro_gps">Erro GPS</string>
+    <string name="title_activity_geo_fire">GeoFire</string>
+    <string name="buttonlatitude">Buscar Latitude Longitude</string>
 </resources>

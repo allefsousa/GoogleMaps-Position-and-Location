@@ -46,7 +46,7 @@ public class BuscarLocalTask  extends AsyncTaskLoader<List<Address>>{
 
 
 
-        return null;
+        return menderecoEncontrados;
     }
 
 
